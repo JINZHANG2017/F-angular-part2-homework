@@ -13,17 +13,27 @@ export class StudentDetailComponent implements OnInit {
   student?: Student;
   errorMessage: string;
 
-  constructor(private route: ActivatedRoute,
-              private studentService: StudentService) {
-  }
+  constructor(
+    private route: ActivatedRoute,
+    private studentService: StudentService
+  ) {}
 
   ngOnInit(): void {
-    this.route.paramMap.pipe(
-      map(paramMap => Number(paramMap.get('id'))),
-      map(id => this.studentService.getStudent(id)),
-    ).subscribe(
-      student => this.student = student,
-      error => this.errorMessage = error,
-    );
+    this.route.paramMap
+      .pipe(
+        map((paramMap) => Number(paramMap.get('id'))),
+        map((id) => this.studentService.getStudent(id))
+      )
+      .subscribe(
+        (student) =>
+          student.subscribe(
+            (data) => (this.student = data),
+            (error) => {
+              alert(error.status + ' ' + error.statusText);
+              console.log(error);
+            }
+          ),
+        (error) => (this.errorMessage = error)
+      );
   }
 }

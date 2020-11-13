@@ -1,26 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Student } from './student';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StudentService {
+  students: Student[];
 
-  constructor() {
+  constructor(private http: HttpClient) {
   }
-
   // get url: /assets/students.mock.json
-  getStudents(): Student[] {
-    return [
-      {id: 1, name: 'student 1', age: 18},
-      {id: 2, name: 'student 2', age: 19},
-    ];
+  getStudents(): Observable<Student[]>  {
+    return this.http.get<Student[]>('/assets/students.mock.json');
+    
   }
 
   // get url: /assets/student{id}.mock.json
-  getStudent(id: number): Student {
+  getStudent(id: number): Observable<Student> {
+    let url:string =`/assets/student${id}.mock.json`;
     if (id > 0) {
-      return { id, name: `student ${id}`, age: 18 + id };
+      // return { id, name: `student ${id}`, age: 18 + id };
+      return this.http.get<Student>(url);
     } else {
       throw new Error('Not Found');
     }
